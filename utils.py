@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.externals import joblib
 from nltk.corpus import stopwords
 
 #### Usage 1:
@@ -44,13 +46,24 @@ def cleanAndTransform(df):
     data.clean_des = data.clean_des.apply(lambda x: filterStopWords(x)) # Remove stop words
     return data
 
-def saveData(data, filename='data\clean_v1.csv'):
+def saveData(data, filename='data/clean_v1.csv'):
     to_save = data.copy()
     to_save.clean_des = to_save.clean_des.str.join(' ')
     to_save.to_csv(filename, encoding='utf-8', index=False)
     
-def loadCleanData(filename='data\clean_v1.csv', split=False):
+def loadCleanData(filename='data/clean_v1.csv', split=False):
     data = pd.read_csv(filename)
     if split:
         data.clean_des = data.clean_des.str.split()
     return data
+
+def loadClusterData(df_file='data/cluster_df_v1.csv', km_file='data/cluster2_v1.pkl', 
+                    w_file='data/cluster_words_v1.csv', wm_file='data/word_matrix_v1.csv'):
+    df = pd.read_csv(df_file)
+    km = joblib.load(km_file)
+    words = pd.read_csv(w_file)['word'].values
+    w_matrix = pd.read_csv(wm_file)
+    return df, km, words, w_matrix
+
+
+    
